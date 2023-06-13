@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * This file is part of ILIAS, a powerful learning management system
  * published by ILIAS open source e-Learning e.V.
@@ -70,13 +72,14 @@ class ExcelData
         $this->fontColor = $fontColor;
     }
 
-    public function process(ilExcel $adapter) {
+    public function process(ilExcel $adapter)
+    {
         $row = $this->getRow();
         $col = $this->getCol();
         $adapter->setCell($row, $col, $this->getValue());
 
         if ($adapter->getCoordByColumnAndRow($col, $row) === "A6") {
-            $aa ="";
+            $aa = "";
         }
 
         if ($this->getBold()) {
@@ -95,7 +98,7 @@ class ExcelData
     /**
      * @return string
      */
-    public function getValue(): string
+    public function getValue() : string
     {
         return $this->value;
     }
@@ -104,7 +107,7 @@ class ExcelData
      * @param string $value
      * @return ExcelData
      */
-    public function setValue(string $value): ExcelData
+    public function setValue(string $value) : ExcelData
     {
         $this->value = $value;
         return $this;
@@ -113,7 +116,7 @@ class ExcelData
     /**
      * @return int
      */
-    public function getRow(): int
+    public function getRow() : int
     {
         return $this->row;
     }
@@ -122,7 +125,7 @@ class ExcelData
      * @param int $row
      * @return ExcelData
      */
-    public function setRow(int $row): ExcelData
+    public function setRow(int $row) : ExcelData
     {
         $this->row = $row;
         return $this;
@@ -131,7 +134,7 @@ class ExcelData
     /**
      * @return int
      */
-    public function getCol(): int
+    public function getCol() : int
     {
         return $this->col;
     }
@@ -140,7 +143,7 @@ class ExcelData
      * @param int $col
      * @return ExcelData
      */
-    public function setCol(int $col): ExcelData
+    public function setCol(int $col) : ExcelData
     {
         $this->col = $col;
         return $this;
@@ -167,7 +170,7 @@ class ExcelData
     /**
      * @return string
      */
-    public function getBackgroundColor(): string
+    public function getBackgroundColor() : string
     {
         return $this->backgroundColor;
     }
@@ -176,7 +179,7 @@ class ExcelData
      * @param string $backgroundColor
      * @return ExcelData
      */
-    public function setBackgroundColor(string $backgroundColor): ExcelData
+    public function setBackgroundColor(string $backgroundColor) : ExcelData
     {
         $this->backgroundColor = $backgroundColor;
         return $this;
@@ -185,7 +188,7 @@ class ExcelData
     /**
      * @return string
      */
-    public function getFontColor(): string
+    public function getFontColor() : string
     {
         return $this->fontColor;
     }
@@ -194,7 +197,7 @@ class ExcelData
      * @param string $fontColor
      * @return ExcelData
      */
-    public function setFontColor(string $fontColor): ExcelData
+    public function setFontColor(string $fontColor) : ExcelData
     {
         $this->fontColor = $fontColor;
         return $this;

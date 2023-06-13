@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * This file is part of ILIAS, a powerful learning management system
  * published by ILIAS open source e-Learning e.V.
@@ -89,7 +91,7 @@ class ExportHandler
     /**
      * @throws Exception
      */
-    public function export(): void
+    public function export() : void
     {
         $excelTmpFile = ilUtil::ilTempnam() . '.xlsx';
 
@@ -100,7 +102,7 @@ class ExportHandler
          */
         $cbmQuestions = [];
         foreach ($this->test->getQuestions() as $id) {
-            $id = (int)$id;
+            $id = (int) $id;
             if (assQuestion::_getQuestionType($id) === "CBMChoiceQuestion") {
                 $cbmQuestions[] = assQuestion::_instantiateQuestion($id);
             }
@@ -126,7 +128,7 @@ class ExportHandler
      * @return ExcelData[]
      * @throws Exception
      */
-    protected function buildUserSpecificResultsExcelData(array $cbmQuestions, ilAssExcelFormatHelper $adapter, int $activeId, ilTestEvaluationUserData $userData): array
+    protected function buildUserSpecificResultsExcelData(array $cbmQuestions, ilAssExcelFormatHelper $adapter, int $activeId, ilTestEvaluationUserData $userData) : array
     {
         $row = 1;
         $worksheet_index = $adapter->addSheet($userData->getName());
@@ -221,7 +223,7 @@ class ExportHandler
      * @param assQuestion[] $cbmQuestions
      * @return string[]
      */
-    protected function getHeaders(array $cbmQuestions): array
+    protected function getHeaders(array $cbmQuestions) : array
     {
         $headers = [
             $this->lng->txt("name"),
@@ -236,7 +238,7 @@ class ExportHandler
         return $headers;
     }
 
-    protected function deliverFile(string $filePath, string $title): void
+    protected function deliverFile(string $filePath, string $title) : void
     {
         $fileName = ilUtil::getASCIIFilename(preg_replace("/\s/", "_", "cbm_$title")) . ".xls";
         ilUtil::deliverFile($filePath, $fileName, "application/vnd.ms-excel", false, true);
