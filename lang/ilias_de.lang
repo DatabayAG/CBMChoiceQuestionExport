@@ -6,3 +6,6 @@ general.plugin.settings#:#Plugin-Einstellungen
 general.plugin.notActivated#:#Das Plugin ist nicht aktiviert. Bitte aktivieren Sie dieses zunächst.
 general.plugin.requiredParameterMissing#:#Ein benötigter Parameter konnte nicht gefunden werden.
 export.format#:#Komprimierter CBM Export (Excel)
+export.cbmPlugin.notActive#:#CBMChoiceQuestion Plugin muss aktiviert sein.
+export.averageCertainty#:#Durchschnittliche Sicherheit
+export.averageCorrectAnswers#:#Durchschnitt der Korrekten Antworten
