@@ -3,24 +3,24 @@
 ## Requirements
 
                                                     
-
-
-                                                    
 | Component         | Version(s)                                                                                           | Link                      |
 |-------------------|------------------------------------------------------------------------------------------------------|---------------------------|
 | PHP               | ![](https://img.shields.io/badge/7.3-blue.svg) ![](https://img.shields.io/badge/7.4-blue.svg)        | [PHP](https://php.net)    |
 | ILIAS             | ![](https://img.shields.io/badge/7-orange.svg) to ![](https://img.shields.io/badge/7.999-orange.svg) | [ILIAS](https://ilias.de) |
 | CBMChoiceQuestion | ![](https://img.shields.io/badge/r7-blue.svg)                                                        | [GitLab](https://gitlab.databay.de/Ilias-Plugins/CBMChoiceQuestion) |
 
----
-## Table of contents
+<!-- TOC -->
+* [TestExporter Plugin - CBMChoiceQuestionExport](#testexporter-plugin---cbmchoicequestionexport)
+  * [Requirements](#requirements)
+  * [Information](#information)
+  * [Installation](#installation)
+  * [Usage](#usage)
+<!-- TOC -->
 
-- [TestExporter Plugin - CBMChoiceQuestionExport](#testexporter-plugin---cbmchoicequestionexport)
-    * [Requirements](#requirements)
-    * [Installation](#installation)
-    * [Usage](#usage)
+## Information
 
----
+Requires the **CBMChoiceQuestion** plugin to be installed and active.  
+Exports test data from the **CBMChoiceQuestion** plugin into an Excel file
 
 ## Installation
 
