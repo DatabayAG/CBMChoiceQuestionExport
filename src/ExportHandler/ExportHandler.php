@@ -91,7 +91,7 @@ class ExportHandler
     /**
      * @throws Exception
      */
-    public function export(): void
+    public function export() : void
     {
         $excelTmpFile = ilUtil::ilTempnam() . '.xlsx';
 
@@ -128,7 +128,7 @@ class ExportHandler
      * @param ilTestEvaluationUserData[] $participants
      * @return ExcelData[]
      */
-    protected function buildOverviewResultsExcelData(array $cbmQuestions, ilAssExcelFormatHelper $adapter, array $participants): array
+    protected function buildOverviewResultsExcelData(array $cbmQuestions, ilAssExcelFormatHelper $adapter, array $participants) : array
     {
         $row = 1;
         $worksheet_index = $adapter->addSheet($this->lng->txt("overview"));
@@ -188,7 +188,7 @@ class ExportHandler
      * @return ExcelData[]
      * @throws Exception
      */
-    protected function buildUserSpecificResultsExcelData(array $cbmQuestions, ilAssExcelFormatHelper $adapter, int $activeId, ilTestEvaluationUserData $userData): array
+    protected function buildUserSpecificResultsExcelData(array $cbmQuestions, ilAssExcelFormatHelper $adapter, int $activeId, ilTestEvaluationUserData $userData) : array
     {
         $row = 1;
         $worksheet_index = $adapter->addSheet($userData->getName());
@@ -284,7 +284,7 @@ class ExportHandler
      * @param assQuestion[] $cbmQuestions
      * @return string[]
      */
-    protected function getHeaders(array $cbmQuestions): array
+    protected function getHeaders(array $cbmQuestions) : array
     {
         $headers = [
             $this->lng->txt("name"),
@@ -299,7 +299,7 @@ class ExportHandler
         return $headers;
     }
 
-    protected function deliverFile(string $filePath, string $title): void
+    protected function deliverFile(string $filePath, string $title) : void
     {
         $fileName = ilUtil::getASCIIFilename(preg_replace("/\s/", "_", "cbm_$title")) . ".xls";
         ilUtil::deliverFile($filePath, $fileName, "application/vnd.ms-excel", false, true);
