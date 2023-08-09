@@ -119,7 +119,10 @@ class ExportHandler
         }
 
         $adapter->writeToFile($excelTmpFile);
-        $this->deliverFile($excelTmpFile, $this->test->getTitle());
+        //$this->deliverFile($excelTmpFile, $this->test->getTitle());
+
+        ilUtil::makeDirParents(dirname($this->filename->getPathname('xls', 'cbmChoiceExport')));
+        rename($excelTmpFile, $this->filename->getPathname('xls', 'cbmChoiceExport'));
     }
 
     /**
