@@ -91,7 +91,7 @@ class ExportHandler
     /**
      * @throws Exception
      */
-    public function export() : void
+    public function export(): void
     {
         $excelTmpFile = ilUtil::ilTempnam() . '.xlsx';
 
@@ -108,6 +108,9 @@ class ExportHandler
             }
         }
 
+        foreach ($this->buildOverviewResultsExcelData($cbmQuestions, $adapter, $this->data->getParticipants()) as $data) {
+            $data->process($adapter);
+        }
 
         foreach ($this->data->getParticipants() as $activeId => $userData) {
             foreach ($this->buildUserSpecificResultsExcelData($cbmQuestions, $adapter, $activeId, $userData) as $data) {
@@ -120,7 +123,64 @@ class ExportHandler
     }
 
     /**
-     * @param int $row
+     * @param CBMChoiceQuestion[] $cbmQuestions
+     * @param ilAssExcelFormatHelper $adapter
+     * @param ilTestEvaluationUserData[] $participants
+     * @return ExcelData[]
+     */
+    protected function buildOverviewResultsExcelData(array $cbmQuestions, ilAssExcelFormatHelper $adapter, array $participants): array
+    {
+        $row = 1;
+        $worksheet_index = $adapter->addSheet($this->lng->txt("overview"));
+        $adapter->setActiveSheet($worksheet_index);
+        $excelData = [];
+
+
+        $row += 2;
+
+        $excelData[] = new ExcelData($row, 0, $this->lng->txt("question_title"));
+        $excelData[] = new ExcelData($row, 1, $this->plugin->txt("export.averageCertainty"));
+        $excelData[] = new ExcelData($row, 2, $this->plugin->txt("export.averageCorrectAnswers"));
+        $row++;
+
+        foreach ($cbmQuestions as $cbmQuestion) {
+            $excelData[] = new ExcelData($row, 0, $cbmQuestion->getTitle());
+            $cbmAverageCount = 0;
+            $correctUserAnswersCount = 0;
+            $correctAnswersCount = 0;
+
+            foreach ($cbmQuestion->getAnswers() as $answer) {
+                $correctAnswersCount += $answer->isAnswerCorrect() ? 1 : 0;
+            }
+
+            if ($participants === []) {
+                $excelData[] = new ExcelData($row, 1, "0%");
+                $excelData[] = new ExcelData($row, 2, "0%");
+                continue;
+            }
+
+            foreach ($participants as $activeId => $userData) {
+                $solution = $cbmQuestion->mapSolution($cbmQuestion->getSolutionValues($activeId, $userData->getScoredPass()));
+                foreach ($solution->getAnswers() as $answer) {
+                    $correctUserAnswersCount += $answer->isAnswerCorrect() ? 1 : 0;
+                }
+                $cbmAverageCount += $solution->getCbmChoice() === "certain" ? 1 : 0;
+            }
+
+            if ($correctAnswersCount > 0 && $correctUserAnswersCount > 0) {
+                $correctAnswersAverage = $correctUserAnswersCount / ($correctAnswersCount * count($participants));
+            } else {
+                $correctAnswersAverage = 0;
+            }
+
+            $excelData[] = new ExcelData($row, 1, (round($cbmAverageCount / count($participants) * 100, 2)) . "%");
+            $excelData[] = new ExcelData($row, 2, (round($correctAnswersAverage * 100, 2)) . "%");
+            $row++;
+        }
+        return $excelData;
+    }
+
+    /**
      * @param CBMChoiceQuestion[] $cbmQuestions
      * @param ilAssExcelFormatHelper $adapter
      * @param int $activeId
@@ -128,7 +188,7 @@ class ExportHandler
      * @return ExcelData[]
      * @throws Exception
      */
-    protected function buildUserSpecificResultsExcelData(array $cbmQuestions, ilAssExcelFormatHelper $adapter, int $activeId, ilTestEvaluationUserData $userData) : array
+    protected function buildUserSpecificResultsExcelData(array $cbmQuestions, ilAssExcelFormatHelper $adapter, int $activeId, ilTestEvaluationUserData $userData): array
     {
         $row = 1;
         $worksheet_index = $adapter->addSheet($userData->getName());
@@ -176,10 +236,10 @@ class ExportHandler
         $cbmAverage = $cbmAverageCount / count($cbmQuestions);
         $averageCorrectAnswer = $averageCorrectAnswerCount / count($cbmQuestions);
         $adapter->setCell($row, 0, $this->plugin->txt("export.averageCertainty"));
-        $adapter->setCell($row++, 1, ($cbmAverage * 100) . "%");
+        $adapter->setCell($row++, 1, (round($cbmAverage * 100)) . "%");
 
         $adapter->setCell($row, 0, $this->plugin->txt("export.averageCorrectAnswers"));
-        $adapter->setCell($row, 1, ($averageCorrectAnswer * 100) . "%");
+        $adapter->setCell($row, 1, (round($averageCorrectAnswer * 100)) . "%");
 
         $row += 2;
 
@@ -219,11 +279,12 @@ class ExportHandler
         return $excelData;
     }
 
+
     /**
      * @param assQuestion[] $cbmQuestions
      * @return string[]
      */
-    protected function getHeaders(array $cbmQuestions) : array
+    protected function getHeaders(array $cbmQuestions): array
     {
         $headers = [
             $this->lng->txt("name"),
@@ -238,7 +299,7 @@ class ExportHandler
         return $headers;
     }
 
-    protected function deliverFile(string $filePath, string $title) : void
+    protected function deliverFile(string $filePath, string $title): void
     {
         $fileName = ilUtil::getASCIIFilename(preg_replace("/\s/", "_", "cbm_$title")) . ".xls";
         ilUtil::deliverFile($filePath, $fileName, "application/vnd.ms-excel", false, true);
