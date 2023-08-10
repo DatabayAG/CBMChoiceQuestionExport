@@ -138,7 +138,6 @@ class ExportHandler
         $adapter->setActiveSheet($worksheet_index);
         $excelData = [];
 
-
         $row += 2;
 
         $excelData[] = new ExcelData($row, 0, $this->lng->txt("question_title"));
@@ -148,13 +147,9 @@ class ExportHandler
 
         foreach ($cbmQuestions as $cbmQuestion) {
             $excelData[] = new ExcelData($row, 0, $cbmQuestion->getTitle());
-            $cbmAverageCount = 0;
+            $certainCount = 0;
             $correctUserAnswersCount = 0;
-            $correctAnswersCount = 0;
-
-            foreach ($cbmQuestion->getAnswers() as $answer) {
-                $correctAnswersCount += $answer->isAnswerCorrect() ? 1 : 0;
-            }
+            $correctAnswersCount = $cbmQuestion->getCorrectAnswerCount();
 
             if ($participants === []) {
                 $excelData[] = new ExcelData($row, 1, "0%");
@@ -164,10 +159,8 @@ class ExportHandler
 
             foreach ($participants as $activeId => $userData) {
                 $solution = $cbmQuestion->mapSolution($cbmQuestion->getSolutionValues($activeId, $userData->getScoredPass()));
-                foreach ($solution->getAnswers() as $answer) {
-                    $correctUserAnswersCount += $answer->isAnswerCorrect() ? 1 : 0;
-                }
-                $cbmAverageCount += $solution->getCbmChoice() === "certain" ? 1 : 0;
+                $correctUserAnswersCount += $solution->getCorrectAnswerCount();
+                $certainCount += (int) $solution->isCertain();
             }
 
             if ($correctAnswersCount > 0 && $correctUserAnswersCount > 0) {
@@ -176,7 +169,13 @@ class ExportHandler
                 $correctAnswersAverage = 0;
             }
 
-            $excelData[] = new ExcelData($row, 1, (round($cbmAverageCount / count($participants) * 100, 2)) . "%");
+            if ($certainCount > 0) {
+                $certainAverage = $certainCount / count($participants);
+            } else {
+                $certainAverage = 0;
+            }
+
+            $excelData[] = new ExcelData($row, 1, (round($certainAverage * 100, 2)) . "%");
             $excelData[] = new ExcelData($row, 2, (round($correctAnswersAverage * 100, 2)) . "%");
             $row++;
         }
@@ -189,7 +188,6 @@ class ExportHandler
      * @param int $activeId
      * @param ilTestEvaluationUserData $userData
      * @return ExcelData[]
-     * @throws Exception
      */
     protected function buildUserSpecificResultsExcelData(array $cbmQuestions, ilAssExcelFormatHelper $adapter, int $activeId, ilTestEvaluationUserData $userData): array
     {
@@ -198,7 +196,7 @@ class ExportHandler
         $adapter->setActiveSheet($worksheet_index);
         $excelData = [];
 
-        $adapter->setCell(
+        $excelData[] = new ExcelData(
             $row,
             0,
             sprintf(
@@ -207,45 +205,42 @@ class ExportHandler
                 $userData->getName()
             )
         );
+
         $row += 2;
 
+        $totalCertainCount = 0;
+        $totalCorrectAnswerCount = 0;
 
-        $cbmAverageCount = 0;
-        $averageCorrectAnswerCount = 0;
-
-        $answersCountTotal = 0;
         foreach ($cbmQuestions as $cbmQuestion) {
-            $correctAnswersCount = 0;
-            $correctUserAnswersCount = 0;
             $solution = $cbmQuestion->mapSolution($cbmQuestion->getSolutionValues($activeId, $userData->getScoredPass()));
 
-            foreach ($cbmQuestion->getAnswers() as $answer) {
-                if ($answer->isAnswerCorrect()) {
-                    $correctAnswersCount++;
-                }
-            }
-
-            foreach ($solution->getAnswers() as $answer) {
-                if ($answer->isAnswerCorrect()) {
-                    $correctUserAnswersCount++;
-                }
-            }
+            $correctAnswersCount = $cbmQuestion->getCorrectAnswerCount();
+            $correctUserAnswersCount = $solution->getCorrectAnswerCount();
 
             if ($correctAnswersCount > 0 && $correctUserAnswersCount > 0) {
-                $averageCorrectAnswerCount += $correctUserAnswersCount / $correctAnswersCount;
+                $totalCorrectAnswerCount += $correctUserAnswersCount / $correctAnswersCount;
             }
-            $cbmAverageCount += $solution->getCbmChoice() === "certain" ? 1 : 0;
+            $totalCertainCount += (int) $solution->isCertain();
         }
-        $cbmAverage = $cbmAverageCount / count($cbmQuestions);
-        $averageCorrectAnswer = $averageCorrectAnswerCount / count($cbmQuestions);
-        $adapter->setCell($row, 0, $this->plugin->txt("export.averageCertainty"));
-        $adapter->setCell($row++, 1, (round($cbmAverage * 100)) . "%");
 
-        $adapter->setCell($row, 0, $this->plugin->txt("export.averageCorrectAnswers"));
-        $adapter->setCell($row, 1, (round($averageCorrectAnswer * 100)) . "%");
+        if ($totalCorrectAnswerCount > 0) {
+            $correctAnswersAverage = $totalCorrectAnswerCount / count($cbmQuestions);
+        } else {
+            $correctAnswersAverage = 0;
+        }
+
+        if ($totalCertainCount > 0) {
+            $certainAverage = $totalCertainCount / count($cbmQuestions);
+        } else {
+            $certainAverage = 0;
+        }
+
+        $excelData[] = new ExcelData($row, 0, $this->plugin->txt("export.averageCertainty"));
+        $excelData[] = new ExcelData($row, 0, $this->plugin->txt("export.averageCorrectAnswers"));
+        $excelData[] = new ExcelData($row++, 1, (round($certainAverage * 100)) . "%");
+        $excelData[] = new ExcelData($row, 1, (round($correctAnswersAverage * 100)) . "%");
 
         $row += 2;
-
 
         foreach ($cbmQuestions as $cbmQuestion) {
             $solution = $cbmQuestion->mapSolution($cbmQuestion->getSolutionValues($activeId, $userData->getScoredPass()));

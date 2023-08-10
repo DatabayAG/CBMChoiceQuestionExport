@@ -195,7 +195,7 @@ class ilCBMChoiceQuestionExportPlugin extends ilTestExportPlugin
         }
     }
 
-    protected function beforeActivation()
+    protected function beforeActivation(): bool
     {
         if (!$this->isCbmChoiceQuestionPluginActive()) {
             ilUtil::sendFailure($this->txt("export.cbmPlugin.notActive"), true);
