@@ -2,12 +2,12 @@
 
 ## Requirements
 
-                                                    
-| Component         | Version(s)                                                                                           | Link                      |
-|-------------------|------------------------------------------------------------------------------------------------------|---------------------------|
-| PHP               | ![](https://img.shields.io/badge/7.3-blue.svg) ![](https://img.shields.io/badge/7.4-blue.svg)        | [PHP](https://php.net)    |
-| ILIAS             | ![](https://img.shields.io/badge/7-orange.svg) to ![](https://img.shields.io/badge/7.999-orange.svg) | [ILIAS](https://ilias.de) |
-| CBMChoiceQuestion | ![](https://img.shields.io/badge/r7-blue.svg)                                                        | [GitLab](https://gitlab.databay.de/Ilias-Plugins/CBMChoiceQuestion) |
+
+| Component         | Version(s)                                                                                           | Link                                                           |
+|-------------------|------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
+| PHP               | ![](https://img.shields.io/badge/7.3-blue.svg) ![](https://img.shields.io/badge/7.4-blue.svg)        | [PHP](https://php.net)                                         |
+| ILIAS             | ![](https://img.shields.io/badge/7-orange.svg) to ![](https://img.shields.io/badge/7.999-orange.svg) | [ILIAS](https://ilias.de)                                      |
+| CBMChoiceQuestion | ![](https://img.shields.io/badge/r7-blue.svg)                                                        | [GitHub](https://github.com/DatabayAG/CBMChoiceQuestion) |
 
 <!-- TOC -->
 * [TestExporter Plugin - CBMChoiceQuestionExport](#testexporter-plugin---cbmchoicequestionexport)
