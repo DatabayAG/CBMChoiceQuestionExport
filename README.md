@@ -40,7 +40,7 @@ Exports test data from the **CBMChoiceQuestion** plugin into an Excel file
 
 1. A new export option is added to a tests Export tab
 ![Exporting CBM Choice Question Results](docs/images/exporting_cbm_choice_question_results.png)
-2. An Excel (.xls) file will be added to the table below.
+2. An Excel (.xlsx) file will be added to the table below.
 3. The excel file will contain:
    - An overview sheet showing the average certainty & average correctness of the answers given for each test (cbm question only)
    - A sheet for each user with average certainty & average correctness over all questions  
