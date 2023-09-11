@@ -121,8 +121,8 @@ class ExportHandler
         $adapter->writeToFile($excelTmpFile);
         //$this->deliverFile($excelTmpFile, $this->test->getTitle());
 
-        ilUtil::makeDirParents(dirname($this->filename->getPathname('xls', 'cbmChoiceExport')));
-        rename($excelTmpFile, $this->filename->getPathname('xls', 'cbmChoiceExport'));
+        ilUtil::makeDirParents(dirname($this->filename->getPathname('xlsx', 'cbmChoiceExport')));
+        rename($excelTmpFile, $this->filename->getPathname('xlsx', 'cbmChoiceExport'));
     }
 
     /**
@@ -299,7 +299,7 @@ class ExportHandler
 
     protected function deliverFile(string $filePath, string $title): void
     {
-        $fileName = ilUtil::getASCIIFilename(preg_replace("/\s/", "_", "cbm_$title")) . ".xls";
+        $fileName = ilUtil::getASCIIFilename(preg_replace("/\s/", "_", "cbm_$title")) . ".xlsx";
         ilUtil::deliverFile($filePath, $fileName, "application/vnd.ms-excel", false, true);
         exit;
     }
