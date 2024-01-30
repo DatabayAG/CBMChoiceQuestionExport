@@ -20,6 +20,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use ILIAS\DI\Container;
 use ILIAS\Plugin\CBMChoiceQuestionExport\ExportHandler\ExportHandler;
+use ILIAS\Plugin\CBMChoiceQuestionExport\Utils\UiUtil;
 use PhpOffice\PhpSpreadsheet\Exception;
 
 class ilCBMChoiceQuestionExportPlugin extends ilTestExportPlugin
@@ -36,31 +37,20 @@ class ilCBMChoiceQuestionExportPlugin extends ilTestExportPlugin
     /** @var string */
     public const PNAME = 'CBMChoiceQuestionExport';
 
-    /** @var self|null */
-    private static $instance = null;
+    private static ?ilCBMChoiceQuestionExportPlugin $instance = null;
+    public Container $dic;
+    public ilSetting $settings;
+    private ilLanguage $lng;
+    private UiUtil $uiUtil;
 
-    /** @var Container */
-    public $dic;
-
-    /** @var ilSetting */
-    public $settings;
-    /**
-     * @var ilLanguage
-     */
-    private $lng;
-    /**
-     * @var ilDBInterface
-     */
-    private $db;
-
-    public function __construct()
+    public function __construct(ilDBInterface $db, ilComponentRepositoryWrite $component_repository, string $id)
     {
         global $DIC;
         $this->dic = $DIC;
         $this->lng = $this->dic->language();
-        $this->db = $this->dic->database();
         $this->settings = new ilSetting(self::class);
-        parent::__construct();
+        $this->uiUtil = new UiUtil($this->dic);
+        parent::__construct($db, $component_repository, $id);
     }
 
     public function getPluginName(): string
@@ -74,12 +64,13 @@ class ilCBMChoiceQuestionExportPlugin extends ilTestExportPlugin
             return self::$instance;
         }
 
-        self::$instance = ilPluginAdmin::getPluginObject(
-            self::CTYPE,
-            self::CNAME,
-            self::SLOT_ID,
-            self::PNAME
-        );
+        global $DIC;
+
+        /**
+         * @var ilComponentFactory $componentFactory
+         */
+        $componentFactory = $DIC["component.factory"];
+        self::$instance = $componentFactory->getPlugin("cbmChoiceExport");
         return self::$instance;
     }
 
@@ -114,7 +105,7 @@ class ilCBMChoiceQuestionExportPlugin extends ilTestExportPlugin
     public function denyConfigIfPluginNotActive(): void
     {
         if (!$this->isActive()) {
-            ilUtil::sendFailure($this->txt("plugin_not_activated"), true);
+            $this->uiUtil->sendFailure($this->txt("plugin_not_activated"), true);
             $this->dic->ctrl()->redirectByClass(ilObjComponentSettingsGUI::class, "view");
         }
     }
@@ -151,19 +142,19 @@ class ilCBMChoiceQuestionExportPlugin extends ilTestExportPlugin
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|ilException
      */
     protected function buildExportFile(ilTestExportFilename $export_path): void
     {
         if (!$this->isCbmChoiceQuestionPluginActive()) {
-            ilUtil::sendFailure($this->txt("export.cbmPlugin.notActive"), true);
+            $this->uiUtil->sendFailure($this->txt("export.cbmPlugin.notActive"), true);
             return;
         }
 
         $cbmChoiceQuestionPlugin = $this->getCbmChoiceQuestionPluginObject();
 
         if (!$cbmChoiceQuestionPlugin) {
-            ilUtil::sendFailure($this->txt("export.cbmPlugin.notActive"), true);
+            $this->uiUtil->sendFailure($this->txt("export.cbmPlugin.notActive"), true);
             return;
         }
 
@@ -174,12 +165,7 @@ class ilCBMChoiceQuestionExportPlugin extends ilTestExportPlugin
     public function getCbmChoiceQuestionPluginObject(): ?ilPlugin
     {
         try {
-            return ilPluginAdmin::getPluginObject(
-                "Modules",
-                "TestQuestionPool",
-                "qst",
-                "CBMChoiceQuestion"
-            );
+            return ilCBMChoiceQuestionPlugin::getInstance();
         } catch (Throwable $ex) {
             return null;
         }
@@ -198,7 +184,7 @@ class ilCBMChoiceQuestionExportPlugin extends ilTestExportPlugin
     protected function beforeActivation(): bool
     {
         if (!$this->isCbmChoiceQuestionPluginActive()) {
-            ilUtil::sendFailure($this->txt("export.cbmPlugin.notActive"), true);
+            $this->uiUtil->sendFailure($this->txt("export.cbmPlugin.notActive"), true);
             return false;
         }
 

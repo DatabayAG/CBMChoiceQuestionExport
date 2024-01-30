@@ -28,40 +28,13 @@ use ilExcel;
  */
 class ExcelData
 {
-    /**
-     * @var string
-     */
-    private $value;
-    /**
-     * @var int
-     */
-    private $row;
-    /**
-     * @var int
-     */
-    private $col;
-    /**
-     * @var bool
-     */
-    private $bold;
+    private string $value;
+    private int $row;
+    private int $col;
+    private bool $bold;
+    private string $backgroundColor;
+    private string $fontColor;
 
-    /**
-     * @var string
-     */
-    private $backgroundColor;
-    /**
-     * @var string
-     */
-    private $fontColor;
-
-    /**
-     * @param string $value
-     * @param int $row
-     * @param int $col
-     * @param bool $bold
-     * @param string $backgroundColor
-     * @param string $fontColor
-     */
     public function __construct(int $row, int $col, string $value, bool $bold = false, string $backgroundColor = "", string $fontColor = "")
     {
         $this->value = $value;
@@ -72,15 +45,11 @@ class ExcelData
         $this->fontColor = $fontColor;
     }
 
-    public function process(ilExcel $adapter)
+    public function process(ilExcel $adapter): void
     {
         $row = $this->getRow();
         $col = $this->getCol();
         $adapter->setCell($row, $col, $this->getValue());
-
-        if ($adapter->getCoordByColumnAndRow($col, $row) === "A6") {
-            $aa = "";
-        }
 
         if ($this->getBold()) {
             $adapter->setBold($adapter->getCoordByColumnAndRow($col, $row));
@@ -95,108 +64,66 @@ class ExcelData
         }
     }
 
-    /**
-     * @return string
-     */
     public function getValue(): string
     {
         return $this->value;
     }
 
-    /**
-     * @param string $value
-     * @return ExcelData
-     */
     public function setValue(string $value): ExcelData
     {
         $this->value = $value;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getRow(): int
     {
         return $this->row;
     }
 
-    /**
-     * @param int $row
-     * @return ExcelData
-     */
     public function setRow(int $row): ExcelData
     {
         $this->row = $row;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getCol(): int
     {
         return $this->col;
     }
 
-    /**
-     * @param int $col
-     * @return ExcelData
-     */
     public function setCol(int $col): ExcelData
     {
         $this->col = $col;
         return $this;
     }
 
-    /**
-     * @return bool|string
-     */
-    public function getBold()
+    public function getBold(): bool
     {
         return $this->bold;
     }
 
-    /**
-     * @param bool|string $bold
-     * @return ExcelData
-     */
-    public function setBold($bold)
+    public function setBold(bool $bold): ExcelData
     {
         $this->bold = $bold;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getBackgroundColor(): string
     {
         return $this->backgroundColor;
     }
 
-    /**
-     * @param string $backgroundColor
-     * @return ExcelData
-     */
     public function setBackgroundColor(string $backgroundColor): ExcelData
     {
         $this->backgroundColor = $backgroundColor;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getFontColor(): string
     {
         return $this->fontColor;
     }
 
-    /**
-     * @param string $fontColor
-     * @return ExcelData
-     */
     public function setFontColor(string $fontColor): ExcelData
     {
         $this->fontColor = $fontColor;

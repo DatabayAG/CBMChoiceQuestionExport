@@ -24,6 +24,9 @@ use CBMChoiceQuestion;
 use ilAssExcelFormatHelper;
 use ilCBMChoiceQuestionExportPlugin;
 use ilDBInterface;
+use ilException;
+use ilFileDelivery;
+use ilFileUtils;
 use ILIAS\DI\Container;
 use ILIAS\Plugin\CBMChoiceQuestionExport\Model\ExcelData;
 use ilLanguage;
@@ -42,38 +45,14 @@ use PhpOffice\PhpSpreadsheet\Exception;
  */
 class ExportHandler
 {
-    /**
-     * @var ilObjTest
-     */
-    private $test;
-    /**
-     * @var ilTestExportFilename
-     */
-    private $filename;
-    /**
-     * @var Container
-     */
-    private $dic;
-    /**
-     * @var ilLanguage
-     */
-    private $lng;
-    /**
-     * @var ilDBInterface
-     */
-    private $db;
-    /**
-     * @var ilTestEvaluationData
-     */
-    private $data;
-    /**
-     * @var ilCBMChoiceQuestionExportPlugin
-     */
-    private $plugin;
-    /**
-     * @var ilPlugin
-     */
-    private $cbmChoiceQuestionPlugin;
+    private ilObjTest $test;
+    private ilTestExportFilename $filename;
+    private Container $dic;
+    private ilLanguage $lng;
+    private ilDBInterface $db;
+    private ilTestEvaluationData $data;
+    private ilCBMChoiceQuestionExportPlugin $plugin;
+    private ilPlugin $cbmChoiceQuestionPlugin;
 
     public function __construct(ilCBMChoiceQuestionExportPlugin $plugin, ilPlugin $cbmChoiceQuestionPlugin, ilObjTest $test, ilTestExportFilename $filename)
     {
@@ -89,11 +68,11 @@ class ExportHandler
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|ilException
      */
     public function export(): void
     {
-        $excelTmpFile = ilUtil::ilTempnam() . '.xlsx';
+        $excelTmpFile = ilFileUtils::ilTempnam() . '.xlsx';
 
         $adapter = new ilAssExcelFormatHelper();
 
@@ -104,7 +83,7 @@ class ExportHandler
         foreach ($this->test->getQuestions() as $id) {
             $id = (int) $id;
             if (assQuestion::_getQuestionType($id) === "CBMChoiceQuestion") {
-                $cbmQuestions[] = assQuestion::_instantiateQuestion($id);
+                $cbmQuestions[] = assQuestion::instantiateQuestion($id);
             }
         }
 
@@ -121,15 +100,15 @@ class ExportHandler
         $adapter->writeToFile($excelTmpFile);
         //$this->deliverFile($excelTmpFile, $this->test->getTitle());
 
-        ilUtil::makeDirParents(dirname($this->filename->getPathname('xlsx', 'cbmChoiceExport')));
+        ilFileUtils::makeDirParents(dirname($this->filename->getPathname('xlsx', 'cbmChoiceExport')));
         rename($excelTmpFile, $this->filename->getPathname('xlsx', 'cbmChoiceExport'));
     }
 
     /**
-     * @param CBMChoiceQuestion[] $cbmQuestions
-     * @param ilAssExcelFormatHelper $adapter
+     * @param CBMChoiceQuestion[]        $cbmQuestions
      * @param ilTestEvaluationUserData[] $participants
      * @return ExcelData[]
+     * @throws Exception
      */
     protected function buildOverviewResultsExcelData(array $cbmQuestions, ilAssExcelFormatHelper $adapter, array $participants): array
     {
@@ -184,10 +163,8 @@ class ExportHandler
 
     /**
      * @param CBMChoiceQuestion[] $cbmQuestions
-     * @param ilAssExcelFormatHelper $adapter
-     * @param int $activeId
-     * @param ilTestEvaluationUserData $userData
      * @return ExcelData[]
+     * @throws Exception
      */
     protected function buildUserSpecificResultsExcelData(array $cbmQuestions, ilAssExcelFormatHelper $adapter, int $activeId, ilTestEvaluationUserData $userData): array
     {
@@ -299,8 +276,8 @@ class ExportHandler
 
     protected function deliverFile(string $filePath, string $title): void
     {
-        $fileName = ilUtil::getASCIIFilename(preg_replace("/\s/", "_", "cbm_$title")) . ".xlsx";
-        ilUtil::deliverFile($filePath, $fileName, "application/vnd.ms-excel", false, true);
+        $fileName = ilFileUtils::getASCIIFilename(preg_replace("/\s/", "_", "cbm_$title")) . ".xlsx";
+        ilFileDelivery::deliverFileAttached($filePath, $fileName, "application/vnd.ms-excel");
         exit;
     }
 }

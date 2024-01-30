@@ -19,8 +19,8 @@ $id = "cbmChoiceExport";
 
 $version = "0.0.1";
 
-$ilias_min_version = "7";
-$ilias_max_version = "7.999";
+$ilias_min_version = "8";
+$ilias_max_version = "8.999";
 
 $responsible = "mbeym";
 $responsible_mail = "mbeym@databay.de";
