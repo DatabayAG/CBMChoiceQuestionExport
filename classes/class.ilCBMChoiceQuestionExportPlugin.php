@@ -37,7 +37,7 @@ class ilCBMChoiceQuestionExportPlugin extends ilTestExportPlugin
     /** @var string */
     public const PNAME = 'CBMChoiceQuestionExport';
 
-    private static ?ilCBMChoiceQuestionExportPlugin $instance = null;
+    private static ?self $instance = null;
     public Container $dic;
     public ilSetting $settings;
     private ilLanguage $lng;
