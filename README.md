@@ -3,11 +3,11 @@
 ## Requirements
 
 
-| Component         | Version(s)                                                                                           | Link                                                           |
-|-------------------|------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
-| PHP               | ![](https://img.shields.io/badge/7.3-blue.svg) ![](https://img.shields.io/badge/7.4-blue.svg)        | [PHP](https://php.net)                                         |
-| ILIAS             | ![](https://img.shields.io/badge/7-orange.svg) to ![](https://img.shields.io/badge/7.999-orange.svg) | [ILIAS](https://ilias.de)                                      |
-| CBMChoiceQuestion | ![](https://img.shields.io/badge/r7-blue.svg)                                                        | [GitHub](https://github.com/DatabayAG/CBMChoiceQuestion) |
+| Component         | Version(s)                                                                                                           | Link                                                     |
+|-------------------|----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| PHP               | ![](https://img.shields.io/badge/7.3-blue.svg) ![](https://img.shields.io/badge/8.0-blue.svg)                        | [PHP](https://php.net)                                   |
+| ILIAS             | ![](https://img.shields.io/badge/8-orange.svg) to ![](https://img.shields.io/badge/8.x-orange.svg)                   | [ILIAS](https://ilias.de)                                |
+| CBMChoiceQuestion | Branch ![](https://img.shields.io/badge/r8__develop-blue.svg) ![](https://img.shields.io/badge/r8__release-blue.svg) | [GitHub](https://github.com/DatabayAG/CBMChoiceQuestion) |
 
 <!-- TOC -->
 * [TestExporter Plugin - CBMChoiceQuestionExport](#testexporter-plugin---cbmchoicequestionexport)
@@ -31,10 +31,11 @@ Exports test data from the **CBMChoiceQuestion** plugin into an Excel file
    composer install --no-dev
    ```
    Developers **MUST** omit the `--no-dev` argument.
-3. Login to ILIAS with an administrator account (e.g. root)
-4. Select **Plugins** in **Extending ILIAS** inside the **Administration** main menu.
-5. Search for the **CBMChoiceQuestionExport** plugin in the list of plugin and choose **Install** from the **Actions** drop-down.
-6. Choose **Activate** from the **Actions** dropdown.
+3. Run ``composer install --no-dev`` in the root path of ilias as well
+4. Login to ILIAS with an administrator account (e.g. root)
+5. Select **Plugins** in **Extending ILIAS** inside the **Administration** main menu.
+6. Search for the **CBMChoiceQuestionExport** plugin in the list of plugin and choose **Install** from the **Actions** drop-down.
+7. Choose **Activate** from the **Actions** dropdown.
 
 ## Usage
 
